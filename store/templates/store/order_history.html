@@ -1,0 +1,41 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<h2>My Orders</h2>
+
+{% if orders %}
+    <ul>
+    {% for order in orders %}
+        <li>
+            <!-- Show order number and date/time placed (e.g., Order #1024 - 2025-07-07 14:30) -->
+            Order #{{ order.id }} - {{ order.created_at|date:"Y-m-d H:i" }}<br>
+
+            <!-- Show order status (e.g., Pending, Shipped, Delivered) -->
+            Status: {{ order.get_status_display }}<br>
+
+            <!-- Show total price for this order -->
+            Total: ${{ order.total }}<br>
+
+            <!-- List all items in this order with quantity -->
+            <ul>
+                {% for item in order.items.all %}
+                    <!-- Example: "T-Shirt (x2)" -->
+                    <li>{{ item.product.name }} (x{{ item.quantity }})</li>
+                {% endfor %}
+            </ul>
+
+            <!-- If user is admin and order is still pending, show button to mark paid -->
+            {% if user.is_staff and order.status == 'pending' %}
+                <form action="{% url 'mark_order_paid' order.id %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit">Mark as paid(Admin Only)</button>
+                </form>
+            {% endif %}
+        </li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <!-- Show message if no orders found -->
+    <p>You have no orders yet.</p>
+{% endif %}
+{% endblock %}

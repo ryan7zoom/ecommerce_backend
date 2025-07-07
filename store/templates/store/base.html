@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Page title (can be replaced by other templates) -->
+    <title>{% block title %}E-commerce Platform{% endblock %}</title>
+</head>
+<body>
+    <!-- Top menu shown on every page -->
+    <nav>
+        {% if user.is_authenticated %}
+            <!-- If someone like Ryan is logged in, show their username and logout option -->
+            <span>Welcome, {{ user.username }}!</span>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <!-- If not logged in, show links to login and register pages -->
+            <a href="{% url 'login' %}">Login</a> |
+            <a href="{% url 'register' %}">Register</a>
+        {% endif %}
+        |
+        <!-- Link to product listing (like Amazon homepage) -->
+        <a href="{% url 'product_list' %}">Home</a>
+        <!-- Link to the user's shopping cart (e.g., Ryan's cart) -->
+        <a href="{% url 'cart_view' %}">Cart</a>
+        <!-- Link to view user's past orders -->
+        <a href="{% url 'order_history' %}">My Orders</a>
+    </nav>
+
+    <hr>
+
+    <!-- Show temporary alert messages like "Order placed!" or "Logged in!" -->
+    {% if messages %}
+      <ul class="messages">
+        {% for message in messages %}
+          <!-- Add a CSS class to the message if it has tags like 'success' or 'error' -->
+          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+
+    <!-- This is where each page's custom content will go -->
+    {% block content %}{% endblock %}
+</body>
+</html>

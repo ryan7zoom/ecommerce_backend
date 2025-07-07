@@ -1,0 +1,51 @@
+{% extends "store/base.html" %}
+{% block content %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Product List</title>
+    <style>
+        /* Grid layout for showing products side by side with space between */
+        .product-grid { display: flex; flex-wrap: wrap; gap: 20px; }
+        
+        /* Each product box with border and fixed width */
+        .product-card { border: 1px solid #ccc; padding: 16px; width: 220px; }
+        
+        /* Product images fit the card nicely */
+        .product-card img { max-width: 100%; height: 150px; object-fit: cover; }
+    </style>
+</head>
+<body>
+    <!-- Link to user's cart -->
+    <a href="{% url 'cart_view' %}">View Cart</a>
+    
+    <h1>Products</h1>
+    
+    <!-- Container holding all product cards -->
+    <div class="product-grid">
+        {% for product in products %}
+        <div class="product-card">
+            <!-- Show product image or placeholder if no image -->
+            {% if product.image %}
+                <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+                <!-- Placeholder box if no image -->
+                <div style="height:150px;background:#eee;display:flex;align-items:center;justify-content:center;">No Image</div>
+            {% endif %}
+            
+            <!-- Product name linked to detail page -->
+            <h3><a href="{% url 'product_detail' product.pk %}">{{ product.name }}</a></h3>
+            
+            <!-- Show product price -->
+            <p>${{ product.price }}</p>
+            
+            <!-- Show product category (e.g., "Clothing") -->
+            <p>Category: {{ product.category.name }}</p>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
+
+{% endblock %}

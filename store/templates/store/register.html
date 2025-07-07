@@ -1,0 +1,25 @@
+{% extends "store/base.html" %}
+{% block content %}
+
+<!-- Registration page for new users like Ryan or Saba -->
+<h2>Register</h2>
+
+<!-- Show error message in red if registration fails (e.g., username taken) -->
+{% if error %}<p style="color:red;">{{ error }}</p>{% endif %}
+
+<form method="post">
+    {% csrf_token %}
+    
+    <!-- Input for choosing username (e.g., "ryan123") -->
+    <input type="text" name="username" placeholder="Username" required><br>
+    
+    <!-- Input for choosing password (hidden input) -->
+    <input type="password" name="password" placeholder="Password" required><br>
+    
+    <!-- Submit registration form -->
+    <button type="submit">Register</button>
+</form>
+
+<!-- Link to login page if user already has an account -->
+<a href="{% url 'login' %}">Login</a>
+{% endblock %}

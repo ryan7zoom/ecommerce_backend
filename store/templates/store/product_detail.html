@@ -1,0 +1,42 @@
+{% extends "store/base.html" %}
+{% block content %}
+
+<!-- Link to go back to the shopping cart -->
+<a href="{% url 'cart_view' %}">View Cart</a>
+
+<!-- Show product name (e.g., "iPhone 14") -->
+<h1>{{ product.name }}</h1>
+
+<!-- Show product image if available -->
+{% if product.image %}
+    <img src="{{ product.image.url }}" alt="{{ product.name }}" style="max-width:300px;">
+{% endif %}
+
+<!-- Show price of the product -->
+<p><strong>Price:</strong> ${{ product.price }}</p>
+
+<!-- Show product category (e.g., "Electronics") -->
+<p><strong>Category:</strong> {{ product.category.name }}</p>
+
+<!-- Show product description -->
+<p><strong>Description:</strong> {{ product.description }}</p>
+
+<!-- Show how many items are in stock -->
+<p><strong>Stock:</strong> {{ product.stock }}</p>
+
+<!-- Form to add product to cart -->
+<form method="post" action="">
+    {% csrf_token %}
+
+    <!-- Input to select quantity (min 1, max stock available) -->
+    <label for="quantity">Quantity:</label>
+    <input type="number" name="quantity" id="quantity" value="1" min="1" max="{{ product.stock }}">
+
+    <!-- Button to add chosen quantity to cart -->
+    <button type="submit">Add to Cart</button>
+</form>
+
+<!-- Link back to product listing -->
+<a href="{% url 'product_list' %}">Back to products</a>
+
+{% endblock %}

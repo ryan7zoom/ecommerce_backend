@@ -1,0 +1,40 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<h1>Your Cart</h1>
+
+{% if cart_items %}
+    <ul>
+        {% for item in cart_items %}
+            <li>
+                <!-- Show product name, quantity, and subtotal (e.g., "Phone (x2) - $200") -->
+                {{ item.product.name }} (x{{ item.quantity }}) - ${{ item.subtotal }}
+
+                <!-- Form to update the cart (increase/decrease/remove items) -->
+                <form action="{% url 'update_cart' %}" method="post" style="display: inline;">
+                    {% csrf_token %}
+                    <!-- Hidden input to send the product's ID (e.g., 12) -->
+                    <input type="hidden" name="product_id" value="{{ item.product.pk }}">
+                    
+                    <!-- Buttons to change quantity or remove item -->
+                    <button type="submit" name="action" value="increase">+</button>   <!-- Add one more -->
+                    <button type="submit" name="action" value="decrease">-</button>   <!-- Remove one -->
+                    <button type="submit" name="action" value="remove">Remove</button> <!-- Remove all -->
+                </form>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Show total amount for all items (e.g., "Total: $320") -->
+    <p><strong>Total:</strong> ${{ total }}</p>
+
+    <!-- Button to move to checkout page -->
+    <a href="{% url 'checkout' %}">Proceed to checkout</a>
+{% else %}
+    <!-- If cart is empty, show this message -->
+    <p>Your cart is empty.</p>
+{% endif %}
+
+<!-- Link back to product listing page -->
+<a href="{% url 'product_list' %}">Continue Shopping</a>
+{% endblock %}

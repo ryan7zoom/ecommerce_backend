@@ -1,0 +1,12 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<!-- Show confirmation message after placing an order -->
+<h2>Order Placed!</h2>
+
+<!-- Show the order ID so user knows their unique order number (e.g., #1024) -->
+<p>Your order #{{ order.id }} has been placed successfully.</p>
+
+<!-- Link to go back to the main product page -->
+<a href="{% url 'product_list' %}">Continue Shopping</a>
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "store/base.html" %}
+
+{% block content %}
+<!-- Checkout page where user fills in delivery info -->
+<h2>Checkout</h2>
+
+<form method="post">
+    {% csrf_token %}
+    
+    <!-- User's full name (e.g., Ryan Ahmed) -->
+    <label>Name:</label><br>
+    <input type="text" name="name" required><br>
+
+    <!-- Shipping address (e.g., 123 Main Street, Dhaka) -->
+    <label>Address:</label><br>
+    <textarea name="address" required></textarea><br>
+
+    <!-- Contact number (e.g., 017xxxxxxxx) -->
+    <label>Phone:</label><br>
+    <input type="text" name="phone" required><br>
+
+    <!-- Show what's in the cart with quantity and price -->
+    <h3>Order Summary</h3>
+    <ul>
+        {% for item in cart_items %}
+            <!-- Example: "T-Shirt (x2) - $40" -->
+            <li>{{ item.product.name }} (x{{ item.quantity }}) - ${{ item.subtotal }}</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Show total price for the order -->
+    <p><strong>Total:</strong> ${{ total }}</p>
+
+    <!-- Button to confirm and place the order -->
+    <button type="submit">Place Order</button>
+</form>
+{% endblock %}

@@ -1,0 +1,36 @@
+# Python cache and compiled files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments (do NOT push these)
+env/
+venv/
+ENV/
+.venv/
+
+# SQLite database file (local DB, don't push)
+db.sqlite3
+
+# Django migration files are usually pushed, but
+# if you want to ignore them (not recommended), uncomment below:
+# */migrations/*.py
+# */migrations/*.pyc
+# !*/migrations/__init__.py
+
+# Logs and local environment files
+*.log
+*.pot
+*.pyc
+
+# VS Code config files
+.vscode/
+
+# macOS files
+.DS_Store
+
+# Media folder for user-uploaded files (images, uploads)
+media/
+
+# Static files collected (if you use collectstatic)
+staticfiles/
