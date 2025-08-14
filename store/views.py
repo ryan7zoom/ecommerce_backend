@@ -19,6 +19,19 @@ from django.contrib.auth.models import User
 # Import messaging framework to display flash messages like 'Order placed!'
 from django.contrib import messages
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
+from .models import Product
+from .serializers import ProductSerializer
+
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.decorators import authentication_classes
+from .serializers import ProductSerializer, CategorySerializer, OrderSerializer
+
 
 # Show all products and categories on homepage (like Amazon main page)
 def product_list(request):
@@ -164,3 +177,83 @@ def mark_order_paid(request, order_id):
         order.save()
         return redirect('order_history')
     return render(request, 'store/mark_paid_confirm.html', {'order': order})
+
+
+@api_view(['GET', 'POST'])
+def api_product_list(request):
+
+    if request.method == 'GET':
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
+        return Response(serializer.data)
+
+    elif request.method == 'POST':
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+@csrf_exempt
+@api_view(['GET', 'PUT', 'DELETE'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def api_product_detail(request, pk):
+    print("=== api_product_detail was called ===")
+    try:
+        product = Product.objects.get(pk=pk)
+    except Product.DoesNotExist:
+        return Response(status=404)
+
+    if request.method == 'GET':
+        serializer = ProductSerializer(product)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        serializer = ProductSerializer(product, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        product.delete()
+        return Response({'error': 'Product not found'}, status=204)
+
+
+from rest_framework import viewsets
+from .models import Category
+from .serializers import CategorySerializer
+
+class CategoryViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Category.objects.all()
+
+    serializer_class = CategorySerializer
+
+from .pagination import ProductPagination
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.filters import SearchFilter, OrderingFilter
+from .permissions import IsStaffOrReadOnly, IsOwnerOrStaff
+
+class ProductViewSet(viewsets.ModelViewSet):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    pagination_class = ProductPagination
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = ['category', 'price', 'stock']
+    search_fields = ['name',  'description']
+    ordering_fields = ['price', 'created_at', 'stock']
+    permission_classes =[IsStaffOrReadOnly]
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    serializer_class = OrderSerializer
+    permission_classes = [IsOwnerOrStaff]
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Order.objects.all().order_by('-created_at')
+        return Order.objects.filter(user=self.request.user).order_by('-created_at')
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+

@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 
 urlpatterns = [
     # Homepage showing list of all products
@@ -28,4 +30,7 @@ urlpatterns = [
 
     # View past orders made by logged-in user
     path('orders/', views.order_history_view, name='order_history'),
+
+    path('orders/<int:order_id>/mark_paid/', views.mark_order_paid, name='mark_order_paid'),
+
 ]
