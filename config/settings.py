@@ -24,7 +24,7 @@ SECRET_KEY = config('SECRET_KEY')
 DEBUG = config('DEBUG', default=False, cast=bool)
 
 if DEBUG:
-    ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+    ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'ecommercebackend-production-8fa2.up.railway.app',]
 else:
     ALLOWED_HOSTS=['*']
 
